@@ -9,7 +9,6 @@ import (
 	"strconv"
 )
 
-
 type AppHandler struct {
 	Storage pkg.IStorage
 }
@@ -23,7 +22,7 @@ type AppHandler struct {
 // @Router /api/url/ [get]
 func (app AppHandler) List(ctx echo.Context) error {
 	item, err := app.Storage.GetListItems()
-	if err!=nil{
+	if err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
 	return ctx.JSON(http.StatusOK, item)
@@ -40,11 +39,11 @@ func (app AppHandler) List(ctx echo.Context) error {
 // @Router /api/url/{id} [get]
 func (app AppHandler) Retrieve(ctx echo.Context) error {
 	id, err := strconv.Atoi(ctx.Param("id"))
-	if err!=nil{
+	if err != nil {
 		return ctx.JSON(http.StatusBadRequest, "url `id` is not provided")
 	}
 	item, err := app.Storage.GetItem(id)
-	if err!=nil{
+	if err != nil {
 		return ctx.JSON(http.StatusNotFound, err.Error())
 	}
 	return ctx.JSON(http.StatusOK, item)
@@ -64,7 +63,7 @@ func (app AppHandler) Put(ctx echo.Context) error {
 	var input data.HashedData
 
 	id, err := strconv.Atoi(ctx.Param("id"))
-	if err!=nil{
+	if err != nil {
 		return ctx.JSON(http.StatusBadRequest, "url `id` is not provided")
 	}
 	decoder := json.NewDecoder(ctx.Request().Body)
@@ -75,11 +74,11 @@ func (app AppHandler) Put(ctx echo.Context) error {
 	}
 
 	item, err := app.Storage.UpdateItem(id, input)
-	if err!=nil{
+	if err != nil {
 		return ctx.JSON(http.StatusOK, err)
 	}
 
- 	return ctx.JSON(http.StatusCreated, item)
+	return ctx.JSON(http.StatusCreated, item)
 }
 
 // Create godoc
@@ -103,7 +102,7 @@ func (app AppHandler) Create(ctx echo.Context) error {
 	}
 
 	item, err := app.Storage.SetItem(input)
-	if err!=nil{
+	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, err)
 	}
 	return ctx.JSON(http.StatusCreated, item)
@@ -117,14 +116,14 @@ func (app AppHandler) Create(ctx echo.Context) error {
 // @Success 200 {object} data.JSONResult{data=data.ResponseHashedData,code=int}
 // @Failure 400 {object} data.JSONResult{code=int,data=interface{},message=string}
 // @Failure 404 {object} data.JSONResult{data=interface{},code=int,message=string}
-// @Router /api/url/ [delete]
+// @Router /api/url/{id} [delete]
 func (app AppHandler) Delete(ctx echo.Context) error {
 	id, err := strconv.Atoi(ctx.Param("id"))
-	if err!=nil{
+	if err != nil {
 		return ctx.JSON(http.StatusBadRequest, "url `id` is not provided")
 	}
 	item, err := app.Storage.DeleteItem(id)
-	if err!=nil{
+	if err != nil {
 		return ctx.JSON(http.StatusNotFound, err.Error())
 	}
 	return ctx.JSON(http.StatusOK, item)
